@@ -29,7 +29,39 @@ const tripsFindByCode = async (req, res) => {
   }
 };
 
+const tripsAddTrip = async (req, res) => {
+  try {
+    const newTrip = await Trip.create(req.body);
+    res.status(201).json(newTrip);
+  } catch (err) {
+    res.status(400).json(err);
+  }
+};
+
+
+
+const tripsUpdateTrip = async (req, res) => {
+  try {
+    const trip = await Trip.findOneAndUpdate(
+      { code: req.params.tripCode },
+      req.body,
+      { new: true, runValidators: true }
+    ).exec();
+
+    if (!trip) {
+      return res.status(404).json({ message: 'Trip not found' });
+    }
+
+    res.status(200).json(trip);
+  } catch (err) {
+    res.status(400).json(err);
+  }
+};
+
+
 module.exports = {
   tripsList,
-  tripsFindByCode
+  tripsFindByCode,
+  tripsAddTrip,
+  tripsUpdateTrip
 };
